@@ -35,7 +35,11 @@ else
 	CXXFLAGS += -DNDEBUG
 endif
 ifndef NLTO
+ifeq (,$(findstring g++, $(CC)))
 	CXXFLAGS += -flto=6
+else
+	CXXFLAGS += -flto=thin
+endif
 else
 	CXXFLAGS += -fno-lto
 endif
@@ -51,7 +55,6 @@ ifeq ($(ARCH), 32)
 	ARCHNAME = x86
 else
 	#Global
-	ARCHFLAGS = -m64 -march=athlon64 -mtune=generic
 	CXXFLAGS += $(ARCHFLAGS)
 
 	#Angelscript

@@ -43,10 +43,7 @@ const char* bmfHead = "BMF ";
 
 namespace render {
 
-struct UV {
-	float u, v;
-};
-
+namespace bmf {
 struct VertexIndex {
 	unsigned a, b, c;
 
@@ -57,7 +54,14 @@ struct VertexIndex {
 		return memcmp(this, &other, sizeof(unsigned) * 3) < 0;
 	}
 };
+}
 
+using namespace bmf;
+
+
+struct UV {
+	float u, v;
+};
 
 void loadBinaryMesh(const char* filename, Mesh& mesh) {
 	static_assert(sizeof(vec3f) == 12, "vec3f must be the size of 3 floats");
@@ -88,7 +92,7 @@ void loadBinaryMesh(const char* filename, Mesh& mesh) {
 		return;
 
 	vertices.resize(count);
-	file.read((char*)&vertices.front(), sizeof(vec3f) * count);
+	file.read((char*)vertices.data(), sizeof(vec3f) * count);
 
 	//Normals
 	file.read((char*)&count, sizeof(count));
@@ -96,7 +100,7 @@ void loadBinaryMesh(const char* filename, Mesh& mesh) {
 		return;
 
 	normals.resize(count);
-	file.read((char*)&normals.front(), sizeof(vec3f) * count);
+	file.read((char*)normals.data(), sizeof(vec3f) * count);
 
 	//UVs
 	file.read((char*)&count, sizeof(count));
@@ -104,7 +108,7 @@ void loadBinaryMesh(const char* filename, Mesh& mesh) {
 		return;
 
 	uvs.resize(count);
-	file.read((char*)&uvs.front(), sizeof(UV) * count);
+	file.read((char*)uvs.data(), sizeof(UV) * count);
 
 	//Faces
 	file.read((char*)&count, sizeof(count));
